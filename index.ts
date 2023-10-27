@@ -1,4 +1,5 @@
 import initSwc, { Options, Output, transformSync } from '@swc/wasm-web';
+// import 'es6-promise/auto';
 
 export class JSXCompiler {
     config: Options;
