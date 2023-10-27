@@ -1,0 +1,9 @@
+{
+  "name": "BrowserJSXCompiler",
+  "version": "1.0.0",
+  "description": "JSX to JS",
+  "main": "index.js",
+  "repository": "https://github.com/edamame-x/browserjsxcompiler.git",
+  "author": "EdamAme-x <edame8080@gmail.com>",
+  "license": "MIT"
+}
