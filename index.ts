@@ -1,5 +1,4 @@
 import initSwc, { Options, Output, transformSync } from '@swc/wasm-web';
-// import 'es6-promise/auto';
 
 export class JSXCompiler {
     config: Options;
@@ -22,9 +21,11 @@ export class JSXCompiler {
               },
             },
           };
+
     }
 
     async compile(code: string): Promise<Output> {
+        await initSwc()
         return transformSync(code, this.config)
     }
 }

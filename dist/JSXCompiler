@@ -1,0 +1,572 @@
+let wasm, heap = Array(128).fill(void 0);
+
+function getObject(e) {
+    return heap[e]
+}
+heap.push(void 0, null, !0, !1);
+let heap_next = heap.length;
+
+function dropObject(e) {
+    e < 132 || (heap[e] = heap_next, heap_next = e)
+}
+
+function takeObject(e) {
+    let t = getObject(e);
+    return dropObject(e), t
+}
+let cachedTextDecoder = new TextDecoder("utf-8", {
+    ignoreBOM: !0,
+    fatal: !0
+});
+cachedTextDecoder.decode();
+let cachedUint8Memory0 = null;
+
+ function transformSync(s, opts, experimental_plugin_bytes_resolver) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.transformSync(retptr, addHeapObject(s), addHeapObject(opts), addHeapObject(experimental_plugin_bytes_resolver));
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+}
+
+function getUint8Memory0() {
+    return (null === cachedUint8Memory0 || 0 === cachedUint8Memory0.byteLength) && (cachedUint8Memory0 = new Uint8Array(wasm.memory.buffer)), cachedUint8Memory0
+}
+
+function getStringFromWasm0(e, t) {
+    return cachedTextDecoder.decode(getUint8Memory0().subarray(e, e + t))
+}
+
+function addHeapObject(e) {
+    heap_next === heap.length && heap.push(heap.length + 1);
+    let t = heap_next;
+    return heap_next = heap[t], heap[t] = e, t
+}
+let WASM_VECTOR_LEN = 0,
+    cachedTextEncoder = new TextEncoder("utf-8"),
+    encodeString = "function" == typeof cachedTextEncoder.encodeInto ? function(e, t) {
+        return cachedTextEncoder.encodeInto(e, t)
+    } : function(e, t) {
+        let n = cachedTextEncoder.encode(e);
+        return t.set(n), {
+            read: e.length,
+            written: n.length
+        }
+    };
+
+function passStringToWasm0(e, t, n) {
+    if (void 0 === n) {
+        let r = cachedTextEncoder.encode(e),
+            a = t(r.length);
+        return getUint8Memory0().subarray(a, a + r.length).set(r), WASM_VECTOR_LEN = r.length, a
+    }
+    let c = e.length,
+        b = t(c),
+        o = getUint8Memory0(),
+        i = 0;
+    for (; i < c; i++) {
+        let g = e.charCodeAt(i);
+        if (g > 127) break;
+        o[b + i] = g
+    }
+    if (i !== c) {
+        0 !== i && (e = e.slice(i)), b = n(b, c, c = i + 3 * e.length);
+        let d = getUint8Memory0().subarray(b + i, b + c),
+            u = encodeString(e, d);
+        i += u.written
+    }
+    return WASM_VECTOR_LEN = i, b
+}
+
+function isLikeNone(e) {
+    return null == e
+}
+let cachedInt32Memory0 = null;
+
+function getInt32Memory0() {
+    return (null === cachedInt32Memory0 || 0 === cachedInt32Memory0.byteLength) && (cachedInt32Memory0 = new Int32Array(wasm.memory.buffer)), cachedInt32Memory0
+}
+let cachedBigInt64Memory0 = null;
+
+function getBigInt64Memory0() {
+    return (null === cachedBigInt64Memory0 || 0 === cachedBigInt64Memory0.byteLength) && (cachedBigInt64Memory0 = new BigInt64Array(wasm.memory.buffer)), cachedBigInt64Memory0
+}
+let cachedFloat64Memory0 = null;
+
+function getFloat64Memory0() {
+    return (null === cachedFloat64Memory0 || 0 === cachedFloat64Memory0.byteLength) && (cachedFloat64Memory0 = new Float64Array(wasm.memory.buffer)), cachedFloat64Memory0
+}
+
+function debugString(e) {
+    let t = typeof e;
+    if ("number" == t || "boolean" == t || null == e) return `${e}`;
+    if ("string" == t) return `"${e}"`;
+    if ("symbol" == t) {
+        let n = e.description;
+        return null == n ? "Symbol" : `Symbol(${n})`
+    }
+    if ("function" == t) {
+        let r = e.name;
+        return "string" == typeof r && r.length > 0 ? `Function(${r})` : "Function"
+    }
+    if (Array.isArray(e)) {
+        let a = e.length,
+            c = "[";
+        a > 0 && (c += debugString(e[0]));
+        for (let b = 1; b < a; b++) c += ", " + debugString(e[b]);
+        return c + "]"
+    }
+    let o = /\[object ([^\]]+)\]/.exec(toString.call(e)),
+        i;
+    if (!(o.length > 1)) return toString.call(e);
+    if ("Object" == (i = o[1])) try {
+        return "Object(" + JSON.stringify(e) + ")"
+    } catch (g) {
+        return "Object"
+    }
+    return e instanceof Error ? `${e.name}: ${e.message}
+${e.stack}` : i
+}
+
+function makeMutClosure(e, t, n, r) {
+    let a = {
+            a: e,
+            b: t,
+            cnt: 1,
+            dtor: n
+        },
+        c = (...e) => {
+            a.cnt++;
+            let t = a.a;
+            a.a = 0;
+            try {
+                return r(t, a.b, ...e)
+            } finally {
+                0 == --a.cnt ? wasm.__wbindgen_export_2.get(a.dtor)(t, a.b) : a.a = t
+            }
+        };
+    return c.original = a, c
+}
+
+function __wbg_adapter_50(e, t, n) {
+    wasm.__wbindgen_export_3(e, t, addHeapObject(n))
+}
+
+function getCachedStringFromWasm0(e, t) {
+    return 0 === e ? getObject(t) : getStringFromWasm0(e, t)
+}
+
+function handleError(e, t) {
+    try {
+        return e.apply(this, t)
+    } catch (n) {
+        wasm.__wbindgen_export_5(addHeapObject(n))
+    }
+}
+
+function __wbg_adapter_126(e, t, n, r) {
+    wasm.__wbindgen_export_6(e, t, addHeapObject(n), addHeapObject(r))
+}
+async function load(e, t) {
+    if ("function" == typeof Response && e instanceof Response) {
+        if ("function" == typeof WebAssembly.instantiateStreaming) try {
+            return await WebAssembly.instantiateStreaming(e, t)
+        } catch (n) {
+            if ("application/wasm" != e.headers.get("Content-Type")) console.warn("`WebAssembly.instantiateStreaming` failed because your server does not serve wasm with `application/wasm` MIME type. Falling back to `WebAssembly.instantiate` which is slower. Original error:\n", n);
+            else throw n
+        }
+        let r = await e.arrayBuffer();
+        return await WebAssembly.instantiate(r, t)
+    } {
+        let a = await WebAssembly.instantiate(e, t);
+        return a instanceof WebAssembly.Instance ? {
+            instance: a,
+            module: e
+        } : a
+    }
+}
+
+function getImports() {
+    let e = {};
+    return e.wbg = {}, e.wbg.__wbindgen_object_drop_ref = function(e) {
+        takeObject(e)
+    }, e.wbg.__wbg_get_27fe3dac1c4d0224 = function(e, t) {
+        let n = getObject(e)[t >>> 0];
+        return addHeapObject(n)
+    }, e.wbg.__wbg_next_88560ec06a094dea = function() {
+        return handleError(function(e) {
+            let t = getObject(e).next();
+            return addHeapObject(t)
+        }, arguments)
+    }, e.wbg.__wbg_done_1ebec03bbd919843 = function(e) {
+        let t = getObject(e).done;
+        return t
+    }, e.wbg.__wbg_value_6ac8da5cc5b3efda = function(e) {
+        let t = getObject(e).value;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_new_f9876326328f45ed = function() {
+        return addHeapObject({})
+    }, e.wbg.__wbindgen_string_new = function(e, t) {
+        let n = getStringFromWasm0(e, t);
+        return addHeapObject(n)
+    }, e.wbg.__wbg_set_20cbc34131e76824 = function(e, t, n) {
+        getObject(e)[takeObject(t)] = takeObject(n)
+    }, e.wbg.__wbg_new_b525de17f44a8943 = function() {
+        return addHeapObject([])
+    }, e.wbg.__wbg_set_17224bc548dd1d7b = function(e, t, n) {
+        getObject(e)[t >>> 0] = takeObject(n)
+    }, e.wbg.__wbg_new_f841cc6f2098f4b5 = function() {
+        let e = new Map;
+        return addHeapObject(e)
+    }, e.wbg.__wbg_set_388c4c6422704173 = function(e, t, n) {
+        let r = getObject(e).set(getObject(t), getObject(n));
+        return addHeapObject(r)
+    }, e.wbg.__wbindgen_is_string = function(e) {
+        let t = "string" == typeof getObject(e);
+        return t
+    }, e.wbg.__wbg_call_9495de66fdbe016b = function() {
+        return handleError(function(e, t, n) {
+            let r = getObject(e).call(getObject(t), getObject(n));
+            return addHeapObject(r)
+        }, arguments)
+    }, e.wbg.__wbindgen_string_get = function(e, t) {
+        let n = getObject(t),
+            r = "string" == typeof n ? n : void 0;
+        var a = isLikeNone(r) ? 0 : passStringToWasm0(r, wasm.__wbindgen_export_0, wasm.__wbindgen_export_1),
+            c = WASM_VECTOR_LEN;
+        getInt32Memory0()[e / 4 + 1] = c, getInt32Memory0()[e / 4 + 0] = a
+    }, e.wbg.__wbindgen_jsval_loose_eq = function(e, t) {
+        let n = getObject(e) == getObject(t);
+        return n
+    }, e.wbg.__wbindgen_is_object = function(e) {
+        let t = getObject(e);
+        return "object" == typeof t && null !== t
+    }, e.wbg.__wbg_entries_4e1315b774245952 = function(e) {
+        let t = Object.entries(getObject(e));
+        return addHeapObject(t)
+    }, e.wbg.__wbg_length_e498fbc24f9c1d4f = function(e) {
+        let t = getObject(e).length;
+        return t
+    }, e.wbg.__wbg_getwithrefkey_15c62c2b8546208d = function(e, t) {
+        let n = getObject(e)[getObject(t)];
+        return addHeapObject(n)
+    }, e.wbg.__wbindgen_is_undefined = function(e) {
+        let t = void 0 === getObject(e);
+        return t
+    }, e.wbg.__wbindgen_in = function(e, t) {
+        let n = getObject(e) in getObject(t);
+        return n
+    }, e.wbg.__wbindgen_error_new = function(e, t) {
+        let n = Error(getStringFromWasm0(e, t));
+        return addHeapObject(n)
+    }, e.wbg.__wbindgen_is_null = function(e) {
+        let t = null === getObject(e);
+        return t
+    }, e.wbg.__wbg_new_9d3a9ce4282a18a8 = function(e, t) {
+        try {
+            var n = {
+                    a: e,
+                    b: t
+                },
+                r = (e, t) => {
+                    let r = n.a;
+                    n.a = 0;
+                    try {
+                        return __wbg_adapter_126(r, n.b, e, t)
+                    } finally {
+                        n.a = r
+                    }
+                };
+            let a = new Promise(r);
+            return addHeapObject(a)
+        } finally {
+            n.a = n.b = 0
+        }
+    }, e.wbg.__wbindgen_boolean_get = function(e) {
+        let t = getObject(e);
+        return "boolean" == typeof t ? t ? 1 : 0 : 2
+    }, e.wbg.__wbindgen_is_bigint = function(e) {
+        let t = "bigint" == typeof getObject(e);
+        return t
+    }, e.wbg.__wbindgen_bigint_get_as_i64 = function(e, t) {
+        let n = getObject(t),
+            r = "bigint" == typeof n ? n : void 0;
+        getBigInt64Memory0()[e / 8 + 1] = isLikeNone(r) ? BigInt(0) : r, getInt32Memory0()[e / 4 + 0] = !isLikeNone(r)
+    }, e.wbg.__wbindgen_bigint_from_i64 = function(e) {
+        return addHeapObject(e)
+    }, e.wbg.__wbindgen_jsval_eq = function(e, t) {
+        let n = getObject(e) === getObject(t);
+        return n
+    }, e.wbg.__wbindgen_bigint_from_u64 = function(e) {
+        let t = BigInt.asUintN(64, e);
+        return addHeapObject(t)
+    }, e.wbg.__wbindgen_number_get = function(e, t) {
+        let n = getObject(t),
+            r = "number" == typeof n ? n : void 0;
+        getFloat64Memory0()[e / 8 + 1] = isLikeNone(r) ? 0 : r, getInt32Memory0()[e / 4 + 0] = !isLikeNone(r)
+    }, e.wbg.__wbg_isSafeInteger_8c4789029e885159 = function(e) {
+        let t = Number.isSafeInteger(getObject(e));
+        return t
+    }, e.wbg.__wbg_isArray_39d28997bf6b96b4 = function(e) {
+        let t = Array.isArray(getObject(e));
+        return t
+    }, e.wbg.__wbg_iterator_55f114446221aa5a = function() {
+        let e = Symbol.iterator;
+        return addHeapObject(e)
+    }, e.wbg.__wbindgen_number_new = function(e) {
+        return addHeapObject(e)
+    }, e.wbg.__wbg_new0_25059e40b1c02766 = function() {
+        let e = new Date;
+        return addHeapObject(e)
+    }, e.wbg.__wbg_getTimezoneOffset_2a6b27fb18493a56 = function(e) {
+        let t = getObject(e).getTimezoneOffset();
+        return t
+    }, e.wbg.__wbg_get_baf4855f9a986186 = function() {
+        return handleError(function(e, t) {
+            let n = Reflect.get(getObject(e), getObject(t));
+            return addHeapObject(n)
+        }, arguments)
+    }, e.wbg.__wbg_getTime_7c59072d1651a3cf = function(e) {
+        let t = getObject(e).getTime();
+        return t
+    }, e.wbg.__wbg_new_abda76e883ba8a5f = function() {
+        let e = Error();
+        return addHeapObject(e)
+    }, e.wbg.__wbg_stack_658279fe44541cf6 = function(e, t) {
+        let n = getObject(t).stack,
+            r = passStringToWasm0(n, wasm.__wbindgen_export_0, wasm.__wbindgen_export_1),
+            a = WASM_VECTOR_LEN;
+        getInt32Memory0()[e / 4 + 1] = a, getInt32Memory0()[e / 4 + 0] = r
+    }, e.wbg.__wbg_error_f851667af71bcfc6 = function(e, t) {
+        var n = getCachedStringFromWasm0(e, t);
+        0 !== e && wasm.__wbindgen_export_4(e, t), console.error(n)
+    }, e.wbg.__wbg_subarray_7526649b91a252a6 = function(e, t, n) {
+        let r = getObject(e).subarray(t >>> 0, n >>> 0);
+        return addHeapObject(r)
+    }, e.wbg.__wbg_getRandomValues_37fa2ca9e4e07fab = function() {
+        return handleError(function(e, t) {
+            getObject(e).getRandomValues(getObject(t))
+        }, arguments)
+    }, e.wbg.__wbindgen_memory = function() {
+        let e = wasm.memory;
+        return addHeapObject(e)
+    }, e.wbg.__wbg_buffer_cf65c07de34b9a08 = function(e) {
+        let t = getObject(e).buffer;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_newwithbyteoffsetandlength_9fb2f11355ecadf5 = function(e, t, n) {
+        let r = new Uint8Array(getObject(e), t >>> 0, n >>> 0);
+        return addHeapObject(r)
+    }, e.wbg.__wbg_randomFillSync_dc1e9a60c158336d = function() {
+        return handleError(function(e, t) {
+            getObject(e).randomFillSync(takeObject(t))
+        }, arguments)
+    }, e.wbg.__wbg_new_537b7341ce90bb31 = function(e) {
+        let t = new Uint8Array(getObject(e));
+        return addHeapObject(t)
+    }, e.wbg.__wbg_set_17499e8aa4003ebd = function(e, t, n) {
+        getObject(e).set(getObject(t), n >>> 0)
+    }, e.wbg.__wbg_crypto_c48a774b022d20ac = function(e) {
+        let t = getObject(e).crypto;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_process_298734cf255a885d = function(e) {
+        let t = getObject(e).process;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_versions_e2e78e134e3e5d01 = function(e) {
+        let t = getObject(e).versions;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_node_1cd7a5d853dbea79 = function(e) {
+        let t = getObject(e).node;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_msCrypto_bcb970640f50a1e8 = function(e) {
+        let t = getObject(e).msCrypto;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_newwithlength_b56c882b57805732 = function(e) {
+        let t = new Uint8Array(e >>> 0);
+        return addHeapObject(t)
+    }, e.wbg.__wbg_require_8f08ceecec0f4fee = function() {
+        return handleError(function() {
+            let e = module.require;
+            return addHeapObject(e)
+        }, arguments)
+    }, e.wbg.__wbindgen_is_function = function(e) {
+        let t = "function" == typeof getObject(e);
+        return t
+    }, e.wbg.__wbg_call_95d1ea488d03e4e8 = function() {
+        return handleError(function(e, t) {
+            let n = getObject(e).call(getObject(t));
+            return addHeapObject(n)
+        }, arguments)
+    }, e.wbg.__wbg_next_b7d530c04fd8b217 = function(e) {
+        let t = getObject(e).next;
+        return addHeapObject(t)
+    }, e.wbg.__wbg_self_e7c1f827057f6584 = function() {
+        return handleError(function() {
+            let e = self.self;
+            return addHeapObject(e)
+        }, arguments)
+    }, e.wbg.__wbg_window_a09ec664e14b1b81 = function() {
+        return handleError(function() {
+            let e = window.window;
+            return addHeapObject(e)
+        }, arguments)
+    }, e.wbg.__wbg_globalThis_87cbb8506fecf3a9 = function() {
+        return handleError(function() {
+            let e = globalThis.globalThis;
+            return addHeapObject(e)
+        }, arguments)
+    }, e.wbg.__wbg_global_c85a9259e621f3db = function() {
+        return handleError(function() {
+            let e = global.global;
+            return addHeapObject(e)
+        }, arguments)
+    }, e.wbg.__wbg_newnoargs_2b8b6bd7753c76ba = function(e, t) {
+        var n = getCachedStringFromWasm0(e, t);
+        let r = Function(n);
+        return addHeapObject(r)
+    }, e.wbg.__wbindgen_object_clone_ref = function(e) {
+        let t = getObject(e);
+        return addHeapObject(t)
+    }, e.wbg.__wbg_length_27a2afe8ab42b09f = function(e) {
+        let t = getObject(e).length;
+        return t
+    }, e.wbg.__wbindgen_debug_string = function(e, t) {
+        let n = debugString(getObject(t)),
+            r = passStringToWasm0(n, wasm.__wbindgen_export_0, wasm.__wbindgen_export_1),
+            a = WASM_VECTOR_LEN;
+        getInt32Memory0()[e / 4 + 1] = a, getInt32Memory0()[e / 4 + 0] = r
+    }, e.wbg.__wbg_instanceof_Uint8Array_01cebe79ca606cca = function(e) {
+        let t;
+        try {
+            t = getObject(e) instanceof Uint8Array
+        } catch {
+            t = !1
+        }
+        let n = t;
+        return n
+    }, e.wbg.__wbg_instanceof_ArrayBuffer_a69f02ee4c4f5065 = function(e) {
+        let t;
+        try {
+            t = getObject(e) instanceof ArrayBuffer
+        } catch {
+            t = !1
+        }
+        let n = t;
+        return n
+    }, e.wbg.__wbg_String_91fba7ded13ba54c = function(e, t) {
+        let n = String(getObject(t)),
+            r = passStringToWasm0(n, wasm.__wbindgen_export_0, wasm.__wbindgen_export_1),
+            a = WASM_VECTOR_LEN;
+        getInt32Memory0()[e / 4 + 1] = a, getInt32Memory0()[e / 4 + 0] = r
+    }, e.wbg.__wbindgen_throw = function(e, t) {
+        throw Error(getStringFromWasm0(e, t))
+    }, e.wbg.__wbg_resolve_fd40f858d9db1a04 = function(e) {
+        let t = Promise.resolve(getObject(e));
+        return addHeapObject(t)
+    }, e.wbg.__wbindgen_cb_drop = function(e) {
+        let t = takeObject(e).original;
+        return 1 == t.cnt-- && (t.a = 0, !0)
+    }, e.wbg.__wbg_then_ec5db6d509eb475f = function(e, t) {
+        let n = getObject(e).then(getObject(t));
+        return addHeapObject(n)
+    }, e.wbg.__wbindgen_closure_wrapper16005 = function(e, t, n) {
+        let r = makeMutClosure(e, t, 220, __wbg_adapter_50);
+        return addHeapObject(r)
+    }, e
+}
+
+function initMemory(e, t) {}
+
+function finalizeInit(e, t) {
+    return wasm = e.exports, init.__wbindgen_wasm_module = t, cachedBigInt64Memory0 = null, cachedFloat64Memory0 = null, cachedInt32Memory0 = null, cachedUint8Memory0 = null, wasm
+}
+
+async function init(e) {
+    void 0 === e && (e = new URL("wasm-web_bg.wasm", import.meta.url));
+    let t = getImports();
+    ("string" == typeof e || "function" == typeof Request && e instanceof Request || "function" == typeof URL && e instanceof URL) && (e = fetch(e)), initMemory(t);
+    let {
+        instance: n,
+        module: r
+    } = await load(await e, t);
+    return finalizeInit(n, r)
+}
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
+var JSXCompiler = /** @class */ (function () {
+    function JSXCompiler(config) {
+        this.config = config ? config : {
+            jsc: {
+                parser: {
+                    syntax: 'typescript',
+                    tsx: true,
+                },
+                transform: {
+                    react: {
+                        pragma: 'jsx',
+                        pragmaFrag: 'Fragment',
+                        throwIfNamespace: true,
+                        development: false,
+                        useBuiltins: false,
+                    },
+                },
+            },
+        };
+    }
+    JSXCompiler.prototype.compile = function (code) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, (0, init())()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, (0, transformSync)(code, this.config)];
+                }
+            });
+        });
+    };
+    return JSXCompiler;
+}());
