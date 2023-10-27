@@ -1,0 +1,2 @@
+# BrowserJSXCompiler
+extends SWC
